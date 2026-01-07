@@ -16,6 +16,21 @@ export const useGameState = () => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Fetch initial state
+  useEffect(() => {
+    fetch('/api/state')
+      .then(res => res.json())
+      .then(data => {
+        setState(prev => ({
+          ...prev,
+          walletBalance: data.walletBalance,
+          roundNumber: data.roundNumber,
+          lastResults: data.lastResults,
+        }));
+      })
+      .catch(err => console.error("Failed to fetch initial state:", err));
+  }, []);
+
   // Timer countdown
   useEffect(() => {
     if (state.phase === 'betting' && state.timer > 0) {
@@ -71,7 +86,6 @@ export const useGameState = () => {
 
   const getPotentialReward = useCallback(() => {
     if (!state.selectedAmount || state.selectedNumbers.length === 0) return 0;
-    // 10x multiplier for winning
     return state.selectedAmount * 10;
   }, [state.selectedAmount]);
 
@@ -80,49 +94,85 @@ export const useGameState = () => {
     return totalBet > 0 && totalBet <= state.walletBalance;
   }, [getTotalBet, state.walletBalance]);
 
-  const spin = useCallback(() => {
+  const spin = useCallback(async () => {
     if (state.phase !== 'locked') return;
 
     setState(prev => ({ ...prev, phase: 'spinning' }));
 
-    // Random spin duration between 10-30 seconds
-    const spinDuration = Math.random() * 20000 + 10000;
+    try {
+      const res = await fetch('/api/spin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          selectedAmount: state.selectedAmount!,
+          selectedNumbers: state.selectedNumbers,
+        }),
+      });
 
-    // Random winning number
-    const winningNumber = NUMBER_OPTIONS[Math.floor(Math.random() * NUMBER_OPTIONS.length)];
+      if (!res.ok) throw new Error('Spin failed');
 
-    setTimeout(() => {
-      setState(prev => {
-        const isWinner = prev.selectedNumbers.includes(winningNumber);
-        const winAmount = isWinner ? (prev.selectedAmount || 0) * 10 : 0;
-        const totalBet = (prev.selectedAmount || 0) * prev.selectedNumbers.length;
-        const newBalance = prev.walletBalance - totalBet + winAmount;
+      const result = await res.json();
 
-        return {
+      // We got the result, but we wait for the spin duration to show it
+      setTimeout(() => {
+        setState(prev => ({
           ...prev,
           phase: 'result',
-          winningNumber,
-          walletBalance: newBalance,
-          lastWinAmount: isWinner ? winAmount : 0,
-          lastResults: [winningNumber, ...prev.lastResults].slice(0, 10),
-        };
-      });
-    }, spinDuration);
+          winningNumber: result.winningNumber,
+          walletBalance: result.newBalance,
+          lastWinAmount: result.winAmount,
+          lastResults: result.lastResults,
+        }));
+      }, result.spinDuration);
 
-    return { spinDuration, winningNumber };
-  }, [state.phase]);
+      return {
+        spinDuration: result.spinDuration,
+        winningNumber: result.winningNumber
+      };
+
+    } catch (error) {
+      console.error("Spin error:", error);
+      // Reset to betting on error so user isn't stuck
+      setState(prev => ({ ...prev, phase: 'betting' }));
+    }
+
+  }, [state.phase, state.selectedAmount, state.selectedNumbers]);
 
   const startNewRound = useCallback(() => {
     setState(prev => ({
       ...prev,
       phase: 'betting',
       timer: BETTING_TIME,
-      roundNumber: prev.roundNumber + 1,
+      roundNumber: prev.roundNumber + 1, // Ideally fetch this from server too, but +1 works for now
       selectedAmount: null,
       selectedNumbers: [],
       winningNumber: null,
       lastWinAmount: null,
     }));
+  }, []);
+
+  const addFunds = useCallback(async (amount: number, accountNumber: string) => {
+    try {
+      const res = await fetch('/api/deposit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, accountNumber }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("Deposit failed:", err);
+        throw new Error(err.detail || 'Deposit failed');
+      }
+
+      const data = await res.json();
+      setState(prev => ({
+        ...prev,
+        walletBalance: data.walletBalance,
+      }));
+    } catch (error) {
+      console.error("Deposit error:", error);
+    }
   }, []);
 
   return {
@@ -135,5 +185,6 @@ export const useGameState = () => {
     canBet,
     spin,
     startNewRound,
+    addFunds,
   };
 };

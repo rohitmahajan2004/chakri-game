@@ -134,8 +134,22 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
           })}
 
           {/* Center circle */}
-          <circle cx="100" cy="100" r="25" className="fill-card stroke-border" strokeWidth="2" />
-          <text x="100" y="100" textAnchor="middle" dominantBaseline="middle" className="fill-primary font-display text-xs"> CHAKRI </text>
+          <circle
+            cx="100"
+            cy="100"
+            r="25"
+            className="fill-card stroke-border"
+            strokeWidth="2"
+          />
+
+          <image
+            href="src/assets/logo.svg"
+            x="75"
+            y="75"
+            width="50"
+            height="50"
+            preserveAspectRatio="xMidYMid meet"
+          />
         </svg>
       </div>
 

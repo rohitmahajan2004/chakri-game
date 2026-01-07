@@ -1,14 +1,16 @@
 import { Wallet, Clock, Hash } from 'lucide-react';
 import { GamePhase } from '@/types/game';
+import { AddMoneyDialog } from './AddMoneyDialog';
 
 interface TopBarProps {
   walletBalance: number;
   timer: number;
   roundNumber: number;
   phase: GamePhase;
+  onAddFunds: (amount: number, accountNumber: string) => Promise<void>;
 }
 
-export const TopBar = ({ walletBalance, timer, roundNumber, phase }: TopBarProps) => {
+export const TopBar = ({ walletBalance, timer, roundNumber, phase, onAddFunds }: TopBarProps) => {
   const formatTimer = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -26,7 +28,10 @@ export const TopBar = ({ walletBalance, timer, roundNumber, phase }: TopBarProps
         </div>
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-wider">Balance</p>
-          <p className="text-xl font-bold text-primary font-display">₹{walletBalance.toLocaleString()}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-xl font-bold text-primary font-display">₹{walletBalance.toLocaleString()}</p>
+            <AddMoneyDialog onAddFunds={onAddFunds} />
+          </div>
         </div>
       </div>
 
