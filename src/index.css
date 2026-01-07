@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 220 20% 6%;
+    --foreground: 45 100% 96%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 45 100% 96%;
+
+    --popover: 220 18% 10%;
+    --popover-foreground: 45 100% 96%;
+
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 6%;
+
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 45 100% 96%;
+
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+
+    --accent: 145 70% 40%;
+    --accent-foreground: 45 100% 96%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 45 100% 96%;
+
+    --casino-green: 145 70% 40%;
+    --casino-red: 0 72% 51%;
+    --casino-gold: 45 100% 50%;
+    --casino-gold-dark: 38 80% 40%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 45 100% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 220 18% 10%;
+    --sidebar-foreground: 45 100% 96%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 45 100% 96%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 45 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, .display-font {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+@layer components {
+  .casino-gradient {
+    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 20% 4%) 100%);
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 20px hsl(var(--casino-gold) / 0.3),
+                0 0 40px hsl(var(--casino-gold) / 0.1);
+  }
+
+  .green-glow {
+    box-shadow: 0 0 20px hsl(var(--casino-green) / 0.4),
+                0 0 40px hsl(var(--casino-green) / 0.2);
+  }
+
+  .red-glow {
+    box-shadow: 0 0 15px hsl(var(--casino-red) / 0.4);
+  }
+
+  .card-elevated {
+    @apply bg-card border border-border rounded-xl;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .btn-money {
+    @apply px-4 py-3 rounded-lg font-semibold text-lg transition-all duration-200;
+    @apply bg-secondary text-foreground border border-border;
+    @apply hover:bg-muted hover:border-primary/50;
+  }
+
+  .btn-money-selected {
+    @apply bg-primary text-primary-foreground border-primary;
+    @apply gold-glow;
+  }
+
+  .btn-number {
+    @apply w-14 h-14 rounded-full font-bold text-xl transition-all duration-200;
+    @apply bg-secondary text-foreground border-2 border-border;
+    @apply hover:border-destructive/50 hover:bg-muted;
+  }
+
+  .btn-number-selected {
+    @apply bg-destructive text-destructive-foreground border-destructive;
+    @apply red-glow;
+  }
+
+  .btn-number-winner {
+    @apply bg-accent text-accent-foreground border-accent;
+    @apply green-glow;
+  }
+
+  .result-chip {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold;
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+
+  .result-chip-recent {
+    @apply bg-accent text-accent-foreground border-accent;
+  }
+}
+
+@layer utilities {
+  .animate-spin-wheel {
+    animation: spinWheel var(--spin-duration, 10s) cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards;
+  }
+
+  @keyframes spinWheel {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(var(--spin-degrees, 1800deg));
+    }
+  }
+
+  .animate-pulse-gold {
+    animation: pulseGold 2s ease-in-out infinite;
+  }
+
+  @keyframes pulseGold {
+    0%, 100% {
+      box-shadow: 0 0 10px hsl(var(--casino-gold) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 25px hsl(var(--casino-gold) / 0.5);
+    }
+  }
+
+  .animate-result-pop {
+    animation: resultPop 0.5s ease-out forwards;
+  }
+
+  @keyframes resultPop {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
