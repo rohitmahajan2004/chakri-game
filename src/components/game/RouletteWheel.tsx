@@ -143,7 +143,7 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
           />
 
           <image
-            href="/public/logo.svg"
+            href="src/assets/logo.svg"
             x="75"
             y="75"
             width="50"
