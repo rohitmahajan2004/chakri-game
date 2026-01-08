@@ -18,12 +18,13 @@ const Index = () => {
     canBet,
     spin,
     startNewRound,
+    addFunds,
   } = useGameState();
 
   const [spinData, setSpinData] = useState<{ winningNumber: number } | null>(null);
 
-  const handleSpin = () => {
-    const result = spin();
+  const handleSpin = async () => {
+    const result = await spin();
     if (result) {
       setSpinData({ winningNumber: result.winningNumber });
     }
@@ -48,6 +49,7 @@ const Index = () => {
           timer={state.timer}
           roundNumber={state.roundNumber}
           phase={state.phase}
+          onAddFunds={addFunds}
         />
 
         {/* Main Game Area */}
