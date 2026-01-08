@@ -143,13 +143,28 @@ export const RouletteWheel = ({ isSpinning, winningNumber, onSpinComplete }: Rou
           />
 
           <image
-            href="src/assets/logo.svg"
-            x="75"
-            y="75"
-            width="50"
-            height="50"
-            preserveAspectRatio="xMidYMid meet"
-          />
+  href="src/assets/inner_circle.png"
+  x="41"
+  y="41"
+  width="119"
+  height="119"
+  preserveAspectRatio="xMidYMid meet"
+/>
+<g
+  style={{
+    transformOrigin: '100px 100px',
+    animation: 'spinY 2.5s linear infinite',
+  }}
+>
+  <image
+  href="src/assets/logo.png"
+  x="73"
+  y="73"
+  width="52"
+  height="52"
+  preserveAspectRatio="xMidYMid meet"
+/>
+</g>
         </svg>
       </div>
 
