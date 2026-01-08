@@ -147,6 +147,16 @@
   .animate-pulse-gold {
     animation: pulseGold 2s ease-in-out infinite;
   }
+  @layer utilities {
+  @keyframes spinY {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }
+}
 
   @keyframes pulseGold {
     0%, 100% {
